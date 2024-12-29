@@ -6,12 +6,41 @@
     <title>Yao Li - Academic Profile</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css/github-markdown.min.css">
     <style>
+        :root {
+            --bg-color: #ffffff;
+            --text-color: #24292f;
+            --link-color: #0969da;
+            --border-color: #d0d7de;
+            --nav-description-color: #57606a;
+            --button-hover-bg: #f6f8fa;
+            --button-bg: #ffffff;
+            --button-border: #d0d7de;
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #0d1117;
+            --text-color: #c9d1d9;
+            --link-color: #58a6ff;
+            --border-color: #30363d;
+            --nav-description-color: #8b949e;
+            --button-hover-bg: #21262d;
+            --button-bg: #21262d;
+            --button-border: #30363d;
+        }
+
+        /* 添加平滑过渡 */
+        * {
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+        }
+
         .markdown-body {
             box-sizing: border-box;
             min-width: 200px;
             max-width: 980px;
             margin: 0 auto;
             padding: 45px;
+            background-color: var(--bg-color);
+            color: var(--text-color);
         }
 
         @media (max-width: 767px) {
@@ -23,12 +52,12 @@
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
             line-height: 1.6;
-            color: #24292f;
-            background-color: #ffffff;
+            color: var(--text-color);
+            background-color: var(--bg-color);
         }
 
         a {
-            color: #0969da;
+            color: var(--link-color);
             text-decoration: none;
         }
 
@@ -37,7 +66,7 @@
         }
 
         .header {
-            border-bottom: 1px solid #d0d7de;
+            border-bottom: 1px solid var(--border-color);
             margin-bottom: 2em;
             padding-bottom: 1em;
         }
@@ -48,7 +77,7 @@
             font-weight: 800;
             line-height: 1.25;
             text-align: left;
-            color: #000000;
+            color: var(--text-color);
             letter-spacing: -0.02em;
         }
 
@@ -73,34 +102,43 @@
         }
 
         .header .nav-description {
-            color: #57606a;
+            color: var(--nav-description-color);
         }
 
-        .language-switcher {
+        .top-controls {
             position: absolute;
             top: 20px;
             right: 20px;
             display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .language-switcher {
+            display: flex;
             gap: 10px;
         }
 
-        .language-switcher button {
+        .language-switcher button,
+        .theme-toggle {
             padding: 5px 10px;
-            border: 1px solid #d0d7de;
+            border: 1px solid var(--button-border);
             border-radius: 4px;
             font-size: 14px;
-            background: white;
+            background: var(--button-bg);
+            color: var(--text-color);
             cursor: pointer;
         }
 
-        .language-switcher button:hover {
-            background-color: #f6f8fa;
+        .language-switcher button:hover,
+        .theme-toggle:hover {
+            background-color: var(--button-hover-bg);
         }
 
         .language-switcher button.active {
-            background-color: #0969da;
-            color: white;
-            border-color: #0969da;
+            background-color: var(--link-color);
+            color: var(--bg-color);
+            border-color: var(--link-color);
         }
 
         .markdown-body img {
@@ -113,17 +151,53 @@
         #loading {
             text-align: center;
             padding: 2em;
-            color: #57606a;
+            color: var(--nav-description-color);
+        }
+
+        /* 优化暗色模式下的文本可读性 */
+        [data-theme="dark"] .markdown-body {
+            --md-code-background: #161b22;
+            --md-code-text: #c9d1d9;
+            font-weight: 350;
+            letter-spacing: 0.2px;
+        }
+
+        [data-theme="dark"] pre {
+            background-color: #161b22 !important;
+        }
+
+        [data-theme="dark"] code {
+            color: #c9d1d9 !important;
+        }
+
+        /* 修改日语注音样式 */
+        ruby {
+            ruby-position: over;
+            ruby-align: center;
+        }
+
+        rt {
+            font-size: 0.4em;
+            color: var(--nav-description-color);
+            line-height: 1;
+            margin-top: 0.5em;
+            letter-spacing: 0.1em;
+            padding: 0 0.1em;
         }
     </style>
 </head>
 <body>
     <div class="markdown-body">
         <div class="header">
-            <div class="language-switcher">
-                <button onclick="switchLanguage('en')" id="btn-en">English</button>
-                <button onclick="switchLanguage('cn')" id="btn-cn">简体中文</button>
-                <button onclick="switchLanguage('jp')" id="btn-jp">日本語</button>
+            <div class="top-controls">
+                <button class="theme-toggle" onclick="toggleTheme()">
+                    <span class="theme-icon">🌓</span>
+                </button>
+                <div class="language-switcher">
+                    <button onclick="switchLanguage('en')" id="btn-en">English</button>
+                    <button onclick="switchLanguage('cn')" id="btn-cn">简体中文</button>
+                    <button onclick="switchLanguage('jp')" id="btn-jp">日本語</button>
+                </div>
             </div>
             <h1 id="titleName">Yao Li</h1>
             <div class="nav">
@@ -149,7 +223,7 @@
         const titles = {
             'en': 'Yao Li',
             'cn': '李 尧',
-            'jp': 'リ・ヤオ'
+            'jp': '李 尭'
         };
 
         const markdownUrls = {
@@ -164,8 +238,13 @@
         }
 
         function updateUI(lang) {
-            document.getElementById('titleName').textContent = titles[lang];
-            document.title = `${titles[lang]} - Academic Profile`;
+            const titleElement = document.getElementById('titleName');
+            if (lang === 'jp') {
+                titleElement.innerHTML = '<ruby>李<rt>リ</rt></ruby> <ruby>尭<rt>ヤオ</rt></ruby>';
+            } else {
+                titleElement.textContent = titles[lang];
+            }
+            document.title = `${titles[lang]} - Curriculum Vitae`;
             
             // Update button states
             document.querySelectorAll('.language-switcher button').forEach(btn => {
@@ -198,15 +277,44 @@
             window.location.href = url.toString();
         }
 
-        // Initialize
+        // 添加主题切换功能
+        function getPreferredTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme) return savedTheme;
+            
+            return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        }
+
+        function setTheme(theme) {
+            document.documentElement.setAttribute('data-theme', theme);
+            localStorage.setItem('theme', theme);
+        }
+
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            setTheme(newTheme);
+        }
+
+        // 初始化主题
         window.onload = function() {
             const currentLang = getCurrentLang();
+            const currentTheme = getPreferredTheme();
+            
+            setTheme(currentTheme);
             marked.setOptions({
                 breaks: true,
                 gfm: true,
             });
             updateUI(currentLang);
             loadContent(currentLang);
+
+            // 监听系统主题变化
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+                if (!localStorage.getItem('theme')) {
+                    setTheme(e.matches ? 'dark' : 'light');
+                }
+            });
         };
     </script>
 </body>
